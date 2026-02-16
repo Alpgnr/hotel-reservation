@@ -37,14 +37,11 @@ router.post("/", auth, async (req, res) => {
   // preventing reservation conflict
   const [conflicts] = await db.query(
     `SELECT * FROM reservations 
-     WHERE room_id = ? 
-     AND status != 'cancelled'
-     AND (
-       (check_in < ? AND check_out > ?) OR
-       (check_in >= ? AND check_in < ?) OR
-       (check_out > ? AND check_out <= ?)
-     )`,
-    [room_id, check_out, check_in, check_in, check_out, check_in, check_out]
+    WHERE room_id = ? 
+    AND status != 'cancelled'
+    AND check_in < ?
+    AND check_out > ?`,
+    [room_id, check_out, check_in]
   );
 
   if (conflicts.length > 0) {
