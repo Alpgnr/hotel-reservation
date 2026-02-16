@@ -8,6 +8,15 @@ const router = express.Router();
 router.post("/", auth, async (req, res) => {
   const { room_id, check_in, check_out } = req.body;
 
+  // basic validation
+  if (!room_id || !check_in || !check_out) {
+    return res.status(400).json({ error: "Eksik veri" });
+  }
+
+  if (new Date(check_in) >= new Date(check_out)) {
+    return res.status(400).json({ error: "Giriş tarihi çıkış tarihinden önce olmalıdır" });
+  }
+
   // preventing reservation conflict
   const [conflicts] = await db.query(
     `SELECT * FROM reservations 
@@ -39,7 +48,7 @@ router.get("/my", auth, async (req, res) => {
   const [rows] = await db.query(
     `SELECT r.*, rooms.room_number
      FROM reservations r
-     JOIN rooms ON rooms.id = r.room_id
+     INNER JOIN rooms ON rooms.id = r.room_id
      WHERE r.user_id = ?`,
     [req.user.id]
   );
