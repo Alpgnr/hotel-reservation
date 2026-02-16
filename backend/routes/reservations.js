@@ -28,6 +28,12 @@ router.post("/", auth, async (req, res) => {
     return res.status(400).json({ error: "Geçmiş bir tarihe rezervasyon yapılamaz" });
   }
 
+  // ensure room exists
+  const [roomRows] = await db.query("SELECT id FROM rooms WHERE id = ?", [room_id]);
+  if (roomRows.length === 0) {
+    return res.status(404).json({ error: "Oda bulunamadı" });
+  }
+
   // preventing reservation conflict
   const [conflicts] = await db.query(
     `SELECT * FROM reservations 
