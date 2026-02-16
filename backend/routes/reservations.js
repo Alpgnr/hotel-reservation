@@ -50,7 +50,7 @@ router.post("/", auth, async (req, res) => {
 
   await db.query(
     `INSERT INTO reservations (user_id, room_id, check_in, check_out, status)
-     VALUES (?, ?, ?, ?, 'active')`,
+    VALUES (?, ?, ?, ?, 'active')`,
     [req.user.id, room_id, check_in, check_out]
   );
 
@@ -61,13 +61,44 @@ router.post("/", auth, async (req, res) => {
 router.get("/my", auth, async (req, res) => {
   const [rows] = await db.query(
     `SELECT r.*, rooms.room_number
-     FROM reservations r
-     INNER JOIN rooms ON rooms.id = r.room_id
-     WHERE r.user_id = ?`,
+    FROM reservations r
+    INNER JOIN rooms ON rooms.id = r.room_id
+    WHERE r.user_id = ?`,
     [req.user.id]
   );
 
   res.json(rows);
+});
+
+// cancel reservation
+router.post("/:id/cancel", auth, async (req, res) => {
+  const { id } = req.params;
+
+  const [rows] = await db.query(
+    "SELECT * FROM reservations WHERE id = ?",
+    [id]
+  );
+
+  if (rows.length === 0) {
+    return res.status(404).json({ error: "Rezervasyon bulunamadı" });
+  }
+
+  const reservation = rows[0];
+
+  if (reservation.user_id !== req.user.id) {
+    return res.status(403).json({ error: "Bu rezervasyonu iptal etme yetkiniz yok" });
+  }
+
+  if (reservation.status === 'cancelled') {
+    return res.status(400).json({ error: "Rezervasyon zaten iptal edilmiş" });
+  }
+
+  await db.query(
+    "UPDATE reservations SET status = 'cancelled' WHERE id = ?",
+    [id]
+  );
+
+  res.json({ message: "Rezervasyon iptal edildi" });
 });
 
 module.exports = router;
