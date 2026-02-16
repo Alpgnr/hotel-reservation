@@ -17,6 +17,17 @@ router.post("/", auth, async (req, res) => {
     return res.status(400).json({ error: "Giriş tarihi çıkış tarihinden önce olmalıdır" });
   }
 
+  // preventing bookings for past dates
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const checkInDate = new Date(check_in);
+  checkInDate.setHours(0, 0, 0, 0);
+
+  if (checkInDate < today) {
+    return res.status(400).json({ error: "Geçmiş bir tarihe rezervasyon yapılamaz" });
+  }
+
   // preventing reservation conflict
   const [conflicts] = await db.query(
     `SELECT * FROM reservations 
