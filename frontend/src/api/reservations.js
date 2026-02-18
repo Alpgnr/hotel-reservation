@@ -33,3 +33,24 @@ export async function cancelReservation(id) {
 
   return res.json();
 }
+
+export async function createReservation(room_id, check_in, check_out) {
+  const token = getToken();
+  if (!token) throw new Error("Yetkisiz");
+
+  const res = await fetch(`${Url}/reservations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ room_id, check_in, check_out }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Rezervasyon oluşturulamadı");
+  }
+
+  return res.json();
+}
