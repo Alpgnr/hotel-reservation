@@ -125,6 +125,116 @@
   margin-top: 10px;
 }
 
+/* Dashboard / page styling */
+.dashboard-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+}
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+.dashboard-nav button {
+  margin-left: 8px;
+}
+.dashboard-main {
+  padding: 24px;
+}
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+.room-card {
+  background: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  text-align: left;
+}
+.room-id { font-weight: 700; font-size: 18px; }
+.room-type { color: #666; }
+.room-price { margin-top: 8px; font-weight: 600; }
+
+.reservations-list { list-style: none; padding: 0; }
+.reservation-item { background: #fff; padding: 12px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+
+/* Bookroom form styling */
+.book-form {
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.book-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.book-form label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.book-form select,
+.book-form input[type="date"] {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.book-form select:focus,
+.book-form input[type="date"]:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.book-form button {
+  padding: 12px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.book-form button:hover:not(:disabled) {
+  background: #5568d3;
+  transform: translateY(-1px);
+}
+
+.book-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.success-message {
+  padding: 12px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: 30px 20px;
