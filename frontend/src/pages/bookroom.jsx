@@ -12,6 +12,8 @@ export default function BookRoom() {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -30,11 +32,13 @@ export default function BookRoom() {
     setSubmitting(true);
 
     try {
-      await createReservation(roomId, checkIn, checkOut);
+      await createReservation(roomId, checkIn, checkOut, adults, children);
       setSuccess("Rezervasyon başarıyla oluşturuldu!");
       setRoomId("");
       setCheckIn("");
       setCheckOut("");
+      setAdults(1);
+      setChildren(0);
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError(err.message || "Hata");
@@ -84,6 +88,32 @@ export default function BookRoom() {
             type="date"
             value={checkOut}
             onChange={(e) => setCheckOut(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="adults">Yetişkin Sayısı</label>
+          <input
+            id="adults"
+            type="number"
+            min="1"
+            max="10"
+            value={adults}
+            onChange={(e) => setAdults(Number(e.target.value))}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="children">Çocuk Sayısı</label>
+          <input
+            id="children"
+            type="number"
+            min="0"
+            max="10"
+            value={children}
+            onChange={(e) => setChildren(Number(e.target.value))}
             required
           />
         </div>
