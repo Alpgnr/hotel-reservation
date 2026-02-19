@@ -54,6 +54,22 @@ export default function BookRoom() {
 
   if (loading) return <div className="page">Odalar yükleniyor...</div>;
 
+  // Calculating total price
+  function calculateTotal() {
+    const room = rooms.find((r) => String(r.id) === String(roomId));
+    if (!room || !checkIn || !checkOut) return 0;
+    const price = room.price || room.rate || 0;
+    const nights = (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24);
+    if (nights <= 0) return 0;
+    let total = adults * price * nights;
+    childrenAges.forEach((ageGroup) => {
+      if (ageGroup === "0-6") return;
+      if (ageGroup === "7-12") total += price * 0.5 * nights;
+      if (ageGroup === "13+") total += price * nights;
+    });
+    return total;
+  };
+
   return (
     <div className="bookroom-page">
       <h3>Yeni Rezervasyon</h3>
@@ -147,6 +163,10 @@ export default function BookRoom() {
               </div>
             </div>
           )}
+        </div>
+
+        <div className="form-group">
+          <strong>Toplam Fiyat: ₺{calculateTotal()}</strong>
         </div>
 
         <button type="submit" disabled={submitting}>
