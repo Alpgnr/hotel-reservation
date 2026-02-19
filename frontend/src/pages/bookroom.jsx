@@ -14,6 +14,7 @@ export default function BookRoom() {
   const [submitting, setSubmitting] = useState(false);
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
+  const [childrenAges, setChildrenAges] = useState([]);
 
   useEffect(() => {
     let mounted = true;
@@ -24,6 +25,10 @@ export default function BookRoom() {
 
     return () => (mounted = false);
   }, []);
+
+  useEffect(() => {
+    setChildrenAges(Array(children).fill("0-6"));
+  }, [children]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -105,17 +110,43 @@ export default function BookRoom() {
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="children">Çocuk Sayısı</label>
-          <input
-            id="children"
-            type="number"
-            min="0"
-            max="10"
-            value={children}
-            onChange={(e) => setChildren(Number(e.target.value))}
-            required
-          />
+        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div>
+            <label htmlFor="children">Çocuk Sayısı</label>
+            <input
+              id="children"
+              type="number"
+              min="0"
+              max="10"
+              value={children}
+              onChange={e => setChildren(Number(e.target.value))}
+              required
+              style={{ width: 60 }}
+            />
+          </div>
+          {children > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <label>Çocukların Yaşları</label>
+              <div style={{ display: 'flex', gap: 4 }}>
+                {Array.from({ length: children }).map((_, i) => (
+                  <select
+                    key={i}
+                    value={childrenAges[i] || "0-6"}
+                    onChange={e => {
+                      const ages = [...childrenAges];
+                      ages[i] = e.target.value;
+                      setChildrenAges(ages);
+                    }}
+                    required
+                  >
+                    <option value="0-6">0-6 yaş aralığı (ücretsiz)</option>
+                    <option value="7-12">7-12 yaş aralığı (%50 indirimli fiyat)</option>
+                    <option value="13+">12 yaş üstü (normal fiyat)</option>
+                  </select>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <button type="submit" disabled={submitting}>
