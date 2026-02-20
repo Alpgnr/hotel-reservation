@@ -120,13 +120,16 @@ export default function BookRoom() {
             type="number"
             min="1"
             max="10"
-            value={adults}
-            onChange={(e) => setAdults(Number(e.target.value))}
+            value={adults === 0 ? '' : adults}
+            onChange={e => {
+              const val = e.target.value === '' ? '' : Math.max(1, Number(e.target.value));
+              setAdults(val);
+            }}
             required
           />
         </div>
 
-        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap' }}>
           <div>
             <label htmlFor="children">Çocuk Sayısı</label>
             <input
@@ -134,16 +137,19 @@ export default function BookRoom() {
               type="number"
               min="0"
               max="10"
-              value={children}
-              onChange={e => setChildren(Number(e.target.value))}
+              value={children === 0 ? '' : children}
+              onChange={e => {
+                const val = e.target.value === '' ? '' : Math.max(0, Number(e.target.value));
+                setChildren(val);
+              }}
               required
               style={{ width: 60 }}
             />
           </div>
           {children > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
               <label>Çocukların Yaşları</label>
-              <div style={{ display: 'flex', gap: 4 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {Array.from({ length: children }).map((_, i) => (
                   <select
                     key={i}
@@ -154,6 +160,7 @@ export default function BookRoom() {
                       setChildrenAges(ages);
                     }}
                     required
+                    style={{ minWidth: 180 }}
                   >
                     <option value="0-6">0-6 yaş aralığı (ücretsiz)</option>
                     <option value="7-12">7-12 yaş aralığı (%50 indirimli fiyat)</option>
