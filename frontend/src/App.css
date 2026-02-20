@@ -235,6 +235,25 @@
   font-size: 14px;
 }
 
+/* book-form dropdown styling */
+.book-form select {
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  background: #f8f8ff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.book-form select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.15);
+}
+.book-form select:hover {
+  border-color: #764ba2;
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: 30px 20px;
