@@ -12,7 +12,7 @@ export default function BookRoom() {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [adults, setAdults] = useState(1);
+  const [adults, setAdults] = useState(0);
   const [children, setChildren] = useState(0);
   const [childrenAges, setChildrenAges] = useState([]);
 
@@ -42,7 +42,7 @@ export default function BookRoom() {
       setRoomId("");
       setCheckIn("");
       setCheckOut("");
-      setAdults(1);
+      setAdults(0);
       setChildren(0);
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
@@ -118,11 +118,11 @@ export default function BookRoom() {
           <input
             id="adults"
             type="number"
-            min="1"
+            min="0"
             max="10"
             value={adults === 0 ? '' : adults}
             onChange={e => {
-              const val = e.target.value === '' ? '' : Math.max(1, Number(e.target.value));
+              const val = e.target.value === '' ? '' : Math.max(0, Number(e.target.value));
               setAdults(val);
             }}
             required
