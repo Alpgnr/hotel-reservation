@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import Login from "./pages/login";
+import Home from "./pages/home";
 import Rooms from "./pages/rooms";
 import Reservations from "./pages/reservations";
 import BookRoom from "./pages/bookroom";
@@ -23,11 +24,7 @@ function Dashboard({ onLogout }) {
       </header>
 
       <main className="dashboard-main">
-        {view === "home" && (
-          <div>
-            <h3>Hoşgeldiniz - Yönetim Paneli</h3>
-          </div>
-        )}
+        {view === "home" && <Home onNavigate={setView} />}
         {view === "rooms" && <Rooms />}
         {view === "bookroom" && <BookRoom />}
         {view === "reservations" && <Reservations />}
