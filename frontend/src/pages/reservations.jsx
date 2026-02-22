@@ -34,12 +34,12 @@ export default function Reservations() {
     }
   };
 
-  if (loading) return <div>Yükleniyor...</div>;
+  if (loading) return <div className="loading-state">Yükleniyor...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
   return (
     <div className="reservations-page">
-      <h3>Rezervasyonlar</h3>
+      <h1 className="page-title">Rezervasyonlar</h1>
       <ul className="reservations-list">
         {list.map((r) => (
           <li key={r.id} className="reservation-item">
@@ -50,13 +50,15 @@ export default function Reservations() {
               {formatDate(r.check_in)} → {formatDate(r.check_out)}
             </div>
             <div>
-              <strong>Durum: </strong> {r.status === "cancelled" ? "İptal" : "Dolu"}
+              <span className={`reservation-status ${r.status === "cancelled" ? "cancelled" : "full"}`}>
+                {r.status === "cancelled" ? "İptal" : "Dolu"}
+              </span>
             </div>
-            <div>
-              {r.status !== "cancelled" && (
-                <button onClick={() => handleCancel(r.id)}>İptal Et</button>
-              )}
-            </div>
+            {r.status !== "cancelled" && (
+              <button type="button" className="reservation-cancel-btn" onClick={() => handleCancel(r.id)}>
+                İptal Et
+              </button>
+            )}
           </li>
         ))}
       </ul>
