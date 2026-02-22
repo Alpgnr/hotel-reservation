@@ -45,6 +45,9 @@ export default function Reservations() {
             <div>
               {formatDate(r.check_in)} → {formatDate(r.check_out)}
             </div>
+            <div>
+              <strong>Durum: </strong> {r.status === "cancelled" ? "İptal" : "Dolu"}
+            </div>
           </li>
         ))}
       </ul>
