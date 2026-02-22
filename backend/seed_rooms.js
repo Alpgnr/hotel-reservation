@@ -3,8 +3,8 @@ const db = require("./db");
 
 const types = [
   { type: "Single", capacity: 1, image: "single.jpg", price: 4000 },
-  { type: "Double", capacity: 2, image: "double.jpg", price: 5000 },
-  { type: "Luxury", capacity: 2, image: "luxury.jpg", price: 6000 },
+  { type: "Double", capacity: 2, image: "double.jpg", price: 6000 },
+  { type: "Luxury", capacity: 2, image: "luxury.jpg", price: 8000 },
   { type: "Family", capacity: 4, image: "family.jpg", price: 7000 },
   { type: "Suite", capacity: 3, image: "suite.jpg", price: 10000 }
 ];
