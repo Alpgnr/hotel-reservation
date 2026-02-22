@@ -29,6 +29,13 @@ export default function Rooms() {
       <div className="rooms-grid">
         {rooms.map((r) => (
           <div key={r.id} className="room-card">
+            {r.image && (
+              <img
+                src={`/${r.image}`}
+                alt={r.type || r.room_type || "Oda"}
+                className="room-image"
+              />
+            )}
             <div className="room-id">{r.room_number || r.id}</div>
             <div className="room-type">{r.type || r.room_type || "—"}</div>
             <div className="room-price">₺{r.price || r.rate || "—"}/gece</div>
