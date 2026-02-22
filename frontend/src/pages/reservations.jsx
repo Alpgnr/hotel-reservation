@@ -48,6 +48,11 @@ export default function Reservations() {
             <div>
               <strong>Durum: </strong> {r.status === "cancelled" ? "İptal" : "Dolu"}
             </div>
+            <div>
+              {r.status !== "cancelled" && (
+                <button onClick={() => handleCancel(r.id)}>İptal Et</button>
+              )}
+            </div>
           </li>
         ))}
       </ul>
