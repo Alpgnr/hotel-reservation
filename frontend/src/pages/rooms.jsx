@@ -20,12 +20,12 @@ export default function Rooms() {
     return () => (mounted = false);
   }, []);
 
-  if (loading) return <div>Yükleniyor...</div>;
+  if (loading) return <div className="loading-state">Yükleniyor...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
   return (
     <div className="page rooms-page">
-      <h3>Odalar</h3>
+      <h1 className="page-title">Odalar</h1>
       <div className="rooms-grid">
         {rooms.map((r) => (
           <div key={r.id} className="room-card">
