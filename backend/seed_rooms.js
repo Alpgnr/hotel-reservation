@@ -22,10 +22,12 @@ async function seedRooms() {
       
       console.log(`Oda eklendi: ${room_number} - ${room.type} (Resim: ${room.image})`);
     }
-  } catch (error) {
-    console.log("\n Toplam 5 farklı oda tipi başarıyla oluşturuldu.");
+    console.log("\nToplam 5 farklı oda tipi başarıyla oluşturuldu.");
     process.exit(0);
-  };
-};
+  } catch (error) {
+    console.error("Seed hatası:", error);
+    process.exit(1);
+  }
+}
 
 seedRooms().catch(e => { console.error(e); process.exit(1); });
