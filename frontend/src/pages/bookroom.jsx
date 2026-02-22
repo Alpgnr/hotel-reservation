@@ -55,7 +55,7 @@ export default function BookRoom() {
     }
   };
 
-  if (loading) return <div className="page">Odalar yükleniyor...</div>;
+  if (loading) return <div className="loading-state">Odalar yükleniyor...</div>;
 
   // Calculating total price
   function calculateTotal() {
@@ -75,7 +75,7 @@ export default function BookRoom() {
 
   return (
     <div className="bookroom-page">
-      <h3>Yeni Rezervasyon</h3>
+      <h1 className="page-title">Yeni Rezervasyon</h1>
       <form onSubmit={handleSubmit} className="book-form">
         <div className="form-group">
           <label htmlFor="room">Oda Seçin</label>
