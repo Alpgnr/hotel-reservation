@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Routes, Route, Navigate, NavLink, Outlet } from "react-router-dom";
 import "./App.css";
 import Login from "./pages/login";
 import Home from "./pages/home";
@@ -7,27 +8,21 @@ import Reservations from "./pages/reservations";
 import BookRoom from "./pages/bookroom";
 import { getToken, logout } from "./api/auth";
 
-function Dashboard({ onLogout }) {
-  const [view, setView] = useState("home");
-
+function DashboardLayout({ onLogout }) {
   return (
     <div className="dashboard-root">
       <header className="dashboard-header">
         <h2>Otel Rezervasyon Sistemi</h2>
         <nav className="dashboard-nav">
-          <button onClick={() => setView("home")}>Ana Sayfa</button>
-          <button onClick={() => setView("rooms")}>Odalar</button>
-          <button onClick={() => setView("bookroom")}>Rezervasyon Yap</button>
-          <button onClick={() => setView("reservations")}>Rezervasyonlar</button>
-          <button onClick={onLogout} className="logout-btn">Çıkış</button>
+          <NavLink to="/" end>Ana Sayfa</NavLink>
+          <NavLink to="/rooms">Odalar</NavLink>
+          <NavLink to="/bookroom">Rezervasyon Yap</NavLink>
+          <NavLink to="/reservations">Rezervasyonlar</NavLink>
+          <button type="button" onClick={onLogout} className="logout-btn">Çıkış</button>
         </nav>
       </header>
-
       <main className="dashboard-main">
-        {view === "home" && <Home onNavigate={setView} />}
-        {view === "rooms" && <Rooms />}
-        {view === "bookroom" && <BookRoom />}
-        {view === "reservations" && <Reservations />}
+        <Outlet />
       </main>
     </div>
   );
@@ -49,11 +44,25 @@ function App() {
 
   return (
     <div className="app-root">
-      {authenticated ? (
-        <Dashboard onLogout={handleLogout} />
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
+      <Routes>
+        <Route path="/login" element={authenticated ? <Navigate to="/" replace /> : <Login onLogin={handleLogin} />} />
+        <Route
+          path="/"
+          element={
+            authenticated ? (
+              <DashboardLayout onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        >
+          <Route index element={<Home />} />
+          <Route path="rooms" element={<Rooms />} />
+          <Route path="bookroom" element={<BookRoom />} />
+          <Route path="reservations" element={<Reservations />} />
+        </Route>
+        <Route path="*" element={<Navigate to={authenticated ? "/" : "/login"} replace />} />
+      </Routes>
     </div>
   );
 }
