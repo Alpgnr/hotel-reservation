@@ -31,6 +31,21 @@ export default function Home({ onNavigate }) {
           Otel rezervasyon paneline hoş geldiniz. Aşağıdaki butonlardan işlemlerinizi hızlıca gerçekleştirebilirsiniz.
         </p>
       </section>
+
+      <section className="home-cards">
+        {cards.map((card) => (
+          <button
+            key={card.id}
+            type="button"
+            className="home-card"
+            onClick={() => onNavigate(card.id)}
+          >
+            <h3 className="home-card-title">{card.title}</h3>
+            <p className="home-card-desc">{card.description}</p>
+            <span className="home-card-action">{card.label} →</span>
+          </button>
+        ))}
+      </section>
     </div>
   );
 }
