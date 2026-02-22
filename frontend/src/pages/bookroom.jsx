@@ -12,9 +12,12 @@ export default function BookRoom() {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [adults, setAdults] = useState(0);
-  const [children, setChildren] = useState(0);
+  const [adults, setAdults] = useState("");
+  const [children, setChildren] = useState("");
   const [childrenAges, setChildrenAges] = useState([]);
+
+  const adultsNum = adults === "" ? 0 : Math.min(10, Math.max(0, parseInt(adults, 10) || 0));
+  const childrenNum = children === "" ? 0 : Math.min(10, Math.max(0, parseInt(children, 10) || 0));
 
   useEffect(() => {
     let mounted = true;
@@ -27,8 +30,8 @@ export default function BookRoom() {
   }, []);
 
   useEffect(() => {
-    setChildrenAges(Array(children).fill("0-6"));
-  }, [children]);
+    setChildrenAges(Array(childrenNum).fill("0-6"));
+  }, [childrenNum]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,13 +40,13 @@ export default function BookRoom() {
     setSubmitting(true);
 
     try {
-      await createReservation(roomId, checkIn, checkOut, adults, children);
+      await createReservation(roomId, checkIn, checkOut, adultsNum, childrenNum);
       setSuccess("Rezervasyon başarıyla oluşturuldu!");
       setRoomId("");
       setCheckIn("");
       setCheckOut("");
-      setAdults(0);
-      setChildren(0);
+      setAdults("");
+      setChildren("");
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError(err.message || "Hata");
@@ -61,7 +64,7 @@ export default function BookRoom() {
     const price = room.price || room.rate || 0;
     const nights = (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24);
     if (nights <= 0) return 0;
-    let total = adults * price * nights;
+    let total = adultsNum * price * nights;
     childrenAges.forEach((ageGroup) => {
       if (ageGroup === "0-6") return;
       if (ageGroup === "7-12") total += price * 0.5 * nights;
@@ -120,12 +123,18 @@ export default function BookRoom() {
             type="number"
             min="0"
             max="10"
-            value={adults === 0 ? '' : adults}
+            placeholder="0"
+            value={adults}
             onChange={e => {
-              const val = e.target.value === '' ? '' : Math.max(0, Number(e.target.value));
-              setAdults(val);
+              const v = e.target.value;
+              if (v === "") {
+                setAdults("");
+                return;
+              }
+              const digits = v.replace(/\D/g, "");
+              const num = digits === "" ? "" : Math.min(10, parseInt(digits, 10));
+              setAdults(num === "" ? "" : String(num));
             }}
-            required
           />
         </div>
 
@@ -137,20 +146,26 @@ export default function BookRoom() {
               type="number"
               min="0"
               max="10"
-              value={children === 0 ? '' : children}
+              placeholder="0"
+              value={children}
               onChange={e => {
-                const val = e.target.value === '' ? '' : Math.max(0, Number(e.target.value));
-                setChildren(val);
+                const v = e.target.value;
+                if (v === "") {
+                  setChildren("");
+                  return;
+                }
+                const digits = v.replace(/\D/g, "");
+                const num = digits === "" ? "" : Math.min(10, parseInt(digits, 10));
+                setChildren(num === "" ? "" : String(num));
               }}
-              required
               style={{ width: 60 }}
             />
           </div>
-          {children > 0 && (
+          {childrenNum > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
               <label>Çocukların Yaşları</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {Array.from({ length: children }).map((_, i) => (
+                {Array.from({ length: childrenNum }).map((_, i) => (
                   <select
                     key={i}
                     value={childrenAges[i] || "0-6"}
