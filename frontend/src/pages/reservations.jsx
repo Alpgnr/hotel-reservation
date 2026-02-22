@@ -24,7 +24,11 @@ export default function Reservations() {
   const handleCancel = async (id) => {
     try {
       await cancelReservation(id);
-      setList((s) => s.filter((r) => r.id !== id));
+      setList((s) =>
+        s.map((r) =>
+          r.id === id ? { ...r, status: "cancelled" } : r
+        )
+      );
     } catch (err) {
       setError(err.message || "İptal edilemedi");
     }
