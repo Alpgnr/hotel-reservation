@@ -428,12 +428,22 @@
 }
 
 /* Booking page styling */
+.bookroom-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .bookroom-page .page-title {
-  margin-bottom: 28px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 32px auto;
+  text-align: center;
 }
 
 .book-form {
-  max-width: 520px;
+  width: 100%;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   gap: 20px;
