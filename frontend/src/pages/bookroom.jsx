@@ -78,7 +78,7 @@ export default function BookRoom() {
       <h1 className="page-title">Yeni Rezervasyon</h1>
       <form onSubmit={handleSubmit} className="book-form">
         <div className="form-group">
-          <label htmlFor="room">Oda Seçin</label>
+          <label htmlFor="room">Oda Seçin:</label>
           <select
             id="room"
             value={roomId}
@@ -95,7 +95,7 @@ export default function BookRoom() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="check_in">Giriş Tarihi</label>
+          <label htmlFor="check_in">Giriş Tarihi:</label>
           <input
             id="check_in"
             type="date"
@@ -106,7 +106,7 @@ export default function BookRoom() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="check_out">Çıkış Tarihi</label>
+          <label htmlFor="check_out">Çıkış Tarihi:</label>
           <input
             id="check_out"
             type="date"
@@ -117,7 +117,7 @@ export default function BookRoom() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="adults">Yetişkin Sayısı</label>
+          <label htmlFor="adults">Yetişkin Sayısı:</label>
           <input
             id="adults"
             type="number"
@@ -140,7 +140,7 @@ export default function BookRoom() {
 
         <div className="form-group" style={{ display: 'flex', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap' }}>
           <div>
-            <label htmlFor="children">Çocuk Sayısı</label>
+            <label htmlFor="children">Çocuk Sayısı:  </label>
             <input
               id="children"
               type="number"
@@ -163,7 +163,7 @@ export default function BookRoom() {
           </div>
           {childrenNum > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
-              <label>Çocukların Yaşları</label>
+              <label>Çocukların Yaşları:</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {Array.from({ length: childrenNum }).map((_, i) => (
                   <select
