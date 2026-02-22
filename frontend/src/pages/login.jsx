@@ -25,7 +25,7 @@ export default function Login({ onLogin }) {
 		<div className="login-page">
 			<div className="login-container">
 				<div className="login-card">
-					<h1 className="login-title">Otel</h1>
+					<h1 className="login-title">Otel Rezervasyon Sistemi</h1>
 					<h2 className="login-subtitle">Giriş Yap</h2>
 					<form onSubmit={handleSubmit} className="login-form">
 						<div className="form-group">
