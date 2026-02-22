@@ -40,13 +40,10 @@ export default function Reservations() {
         {list.map((r) => (
           <li key={r.id} className="reservation-item">
             <div>
-              <strong>{r.name || r.guest || "Ben"}</strong> — Oda {r.room_number || r.room_id || r.room}
+              <strong>Oda {r.room_number}</strong>
             </div>
             <div>
-              {r.check_in || r.from} → {r.check_out || r.to}
-            </div>
-            <div>
-              <button onClick={() => handleCancel(r.id)}>İptal Et</button>
+              {formatDate(r.check_in)} → {formatDate(r.check_out)}
             </div>
           </li>
         ))}
