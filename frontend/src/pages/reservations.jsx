@@ -6,6 +6,11 @@ export default function Reservations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const formatDate = (value) => {
+    if (!value) return "—";
+    return new Date(value).toLocaleDateString("tr-TR");
+  };
+
   useEffect(() => {
     let mounted = true;
     fetchMyReservations()
