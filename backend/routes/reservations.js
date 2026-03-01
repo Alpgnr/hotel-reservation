@@ -7,11 +7,15 @@ const router = express.Router();
 // creating reservation
 router.post("/", auth, async (req, res) => {
   try {
-    const { room_id, check_in, check_out } = req.body;
+    const { room_id, check_in, check_out, adults, children, total_price } = req.body;
 
     // basic validation
     if (!room_id || !check_in || !check_out) {
       return res.status(400).json({ error: "Eksik veri" });
+    }
+
+    if (!adults && !children) {
+      return res.status(400).json({ error: "En az 1 kişi girilmelidir" });
     }
 
     if (new Date(check_in) >= new Date(check_out)) {
@@ -50,9 +54,9 @@ router.post("/", auth, async (req, res) => {
     }
 
     await db.query(
-      `INSERT INTO reservations (user_id, room_id, check_in, check_out, status)
-      VALUES (?, ?, ?, ?, 'active')`,
-      [req.user.id, room_id, check_in, check_out]
+      `INSERT INTO reservations (user_id, room_id, check_in, check_out, adults, children, total_price, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 'active')`,
+      [req.user.id, room_id, check_in, check_out, adults || 0, children || 0, total_price || 0]
     );
 
     res.json({ message: "Rezervasyon oluşturuldu" });
