@@ -39,14 +39,29 @@ export default function BookRoom() {
     setSuccess("");
     setSubmitting(true);
 
+    // validations
+    if (adultsNum === 0 && childrenNum === 0) {
+      setError("En az 1 kişi girilmelidir.");
+      setSubmitting(false);
+      return;
+    }
+
+    const total = calculateTotal();
+    if (total <= 0) {
+      setError("Geçerli bir tarih aralığı ve oda seçiniz.");
+      setSubmitting(false);
+      return;
+    }
+
     try {
-      await createReservation(roomId, checkIn, checkOut, adultsNum, childrenNum);
+      await createReservation(roomId, checkIn, checkOut, adultsNum, childrenNum, total);
       setSuccess("Rezervasyon başarıyla oluşturuldu!");
       setRoomId("");
       setCheckIn("");
       setCheckOut("");
       setAdults("");
       setChildren("");
+      setChildrenAges([]);
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError(err.message || "Hata");
