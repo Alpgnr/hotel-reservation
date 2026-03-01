@@ -21,13 +21,32 @@ export default function Reservations() {
     return () => (mounted = false);
   }, []);
 
-  const handleCancel = async (id) => {
+  const handleCancel = async (id, checkIn) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const checkInDate = new Date(checkIn);
+    checkInDate.setHours(0, 0, 0, 0);
+    const diffDays = Math.ceil((checkInDate - today) / (1000 * 60 * 60 * 24));
+
+    const refundMsg =
+      diffDays >= 3
+        ? "Tam iade verilecek. İptal etmek istiyor musunuz?"
+        : "Check-in tarihine 3 günden az kaldığı için yalnızca %50 iade verilecek. İptal etmek istiyor musunuz?";
+
+    if (!window.confirm(refundMsg)) return;
+
     try {
       await cancelReservation(id);
+
+      const successMsg =
+        diffDays >= 3
+          ? "Rezervasyon iptal edildi. Tam iade yapılacaktır."
+          : "Rezervasyon iptal edildi. %50 iade yapılacaktır.";
+
+      alert(successMsg);
+
       setList((s) =>
-        s.map((r) =>
-          r.id === id ? { ...r, status: "cancelled" } : r
-        )
+        s.map((r) => (r.id === id ? { ...r, status: "cancelled" } : r))
       );
     } catch (err) {
       setError(err.message || "İptal edilemedi");
@@ -55,7 +74,7 @@ export default function Reservations() {
               </span>
             </div>
             {r.status !== "cancelled" && (
-              <button type="button" className="reservation-cancel-btn" onClick={() => handleCancel(r.id)}>
+              <button type="button" className="reservation-cancel-btn" onClick={() => handleCancel(r.id, r.check_in)}>
                 İptal Et
               </button>
             )}
