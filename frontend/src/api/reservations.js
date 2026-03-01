@@ -34,7 +34,7 @@ export async function cancelReservation(id) {
   return res.json();
 }
 
-export async function createReservation(room_id, check_in, check_out) {
+export async function createReservation(room_id, check_in, check_out, adults, children, total_price) {
   const token = getToken();
   if (!token) throw new Error("Yetkisiz");
 
@@ -44,7 +44,7 @@ export async function createReservation(room_id, check_in, check_out) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ room_id, check_in, check_out }),
+    body: JSON.stringify({ room_id, check_in, check_out, adults, children, total_price }),
   });
 
   if (!res.ok) {
