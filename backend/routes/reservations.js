@@ -86,33 +86,42 @@ router.get("/my", auth, async (req, res) => {
 router.post("/:id/cancel", auth, async (req, res) => {
   try {
     const { id } = req.params;
+    const [rows] = await db.query("SELECT * FROM reservations WHERE id = ?", [id]);
 
-    const [rows] = await db.query(
-      "SELECT * FROM reservations WHERE id = ?",
-      [id]
-    );
-
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "Rezervasyon bulunamadı" });
-    }
+    if (rows.length === 0) return res.status(404).json({ error: "Rezervasyon bulunamadı" });
 
     const reservation = rows[0];
 
-    if (reservation.user_id !== req.user.id) {
+    if (reservation.user_id !== req.user.id)
       return res.status(403).json({ error: "Bu rezervasyonu iptal etme yetkiniz yok" });
-    }
 
-    if (reservation.status === 'cancelled') {
+    if (reservation.status === "cancelled")
       return res.status(400).json({ error: "Rezervasyon zaten iptal edilmiş" });
+
+    // refund part
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const checkIn = new Date(reservation.check_in);
+    checkIn.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.ceil((checkIn - today) / (1000*60*60*24));
+
+    if (diffDays < 0) {
+      return res.status(400).json({ error: "Check-in tarihi geçmiş rezervasyonlar iptal edilemez" });
     }
 
-    await db.query(
-      "UPDATE reservations SET status = 'cancelled' WHERE id = ?",
-      [id]
-    );
+    const refundRate = diffDays >= 3 ? 100 : 50;
 
-    res.json({ message: "Rezervasyon iptal edildi" });
+    await db.query("UPDATE reservations SET status = 'cancelled' WHERE id = ?", [id]);
 
+    res.json({
+      message: "Rezervasyon iptal edildi",
+      refundRate,
+      refundMessage:
+        refundRate === 100
+          ? "Tam iade yapılacaktır."
+          : "Check-in tarihine 3 günden az kaldığı için %50 iade yapılacaktır.",
+    });
   } catch (error) {
     console.error("İptal etme hatası:", error);
     res.status(500).json({ error: "İptal edilemedi." });
