@@ -34,7 +34,7 @@ export async function cancelReservation(id) {
   return res.json();
 }
 
-export async function createReservation(room_id, check_in, check_out, adults, children, total_price) {
+export async function createReservation(room_id, check_in, check_out, adults, children, children_ages) {
   const token = getToken();
   if (!token) throw new Error("Yetkisiz");
 
@@ -44,7 +44,7 @@ export async function createReservation(room_id, check_in, check_out, adults, ch
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ room_id, check_in, check_out, adults, children, total_price }),
+    body: JSON.stringify({ room_id, check_in, check_out, adults, children, children_ages }),
   });
 
   if (!res.ok) {
@@ -52,5 +52,26 @@ export async function createReservation(room_id, check_in, check_out, adults, ch
     throw new Error(err.error || "Rezervasyon oluşturulamadı");
   }
 
+  return res.json();
+}
+
+export async function calculatePrice(room_id, check_in, check_out, adults, children_ages) {
+  const token = getToken();
+  if (!token) throw new Error("Yetkisiz");
+ 
+  const res = await fetch(`${Url}/reservations/calculate-price`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ room_id, check_in, check_out, adults, children_ages }),
+  });
+ 
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Fiyat hesaplanamadı");
+  }
+ 
   return res.json();
 }
