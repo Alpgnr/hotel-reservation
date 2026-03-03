@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchRooms } from "../api/rooms";
-import { createReservation } from "../api/reservations";
+import { createReservation, calculatePrice } from "../api/reservations";
 
 export default function BookRoom() {
   const [rooms, setRooms] = useState([]);
@@ -15,6 +15,7 @@ export default function BookRoom() {
   const [adults, setAdults] = useState("");
   const [children, setChildren] = useState("");
   const [childrenAges, setChildrenAges] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const adultsNum = adults === "" ? 0 : Math.min(10, Math.max(0, parseInt(adults, 10) || 0));
   const childrenNum = children === "" ? 0 : Math.min(10, Math.max(0, parseInt(children, 10) || 0));
@@ -33,6 +34,25 @@ export default function BookRoom() {
     setChildrenAges(Array(childrenNum).fill("0-6"));
   }, [childrenNum]);
 
+  // calculate price useEffect
+  useEffect(() => {
+    const calculateTotalPrice = async () => {
+      if (roomId && checkIn && checkOut && adultsNum > 0) {
+        try {
+          const result = await calculatePrice(roomId, checkIn, checkOut, adultsNum, childrenAges);
+          setTotalPrice(result.total_price);
+        } catch (err) {
+          console.error("Fiyat hesaplama hatası:", err);
+          setTotalPrice(0);
+        }
+      } else {
+        setTotalPrice(0);
+      }
+    };
+
+    calculateTotalPrice();
+  }, [roomId, checkIn, checkOut, adultsNum, childrenAges]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -46,15 +66,14 @@ export default function BookRoom() {
       return;
     }
 
-    const total = calculateTotal();
-    if (total <= 0) {
+    if (totalPrice <= 0) {
       setError("Geçerli bir tarih aralığı ve oda seçiniz.");
       setSubmitting(false);
       return;
     }
 
     try {
-      await createReservation(roomId, checkIn, checkOut, adultsNum, childrenNum, total);
+      await createReservation(roomId, checkIn, checkOut, adultsNum, childrenNum, childrenAges);
       setSuccess("Rezervasyon başarıyla oluşturuldu!");
       setRoomId("");
       setCheckIn("");
@@ -62,6 +81,7 @@ export default function BookRoom() {
       setAdults("");
       setChildren("");
       setChildrenAges([]);
+      setTotalPrice(0);
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError(err.message || "Hata");
@@ -71,22 +91,6 @@ export default function BookRoom() {
   };
 
   if (loading) return <div className="loading-state">Odalar yükleniyor...</div>;
-
-  // Calculating total price
-  function calculateTotal() {
-    const room = rooms.find((r) => String(r.id) === String(roomId));
-    if (!room || !checkIn || !checkOut) return 0;
-    const price = room.price || room.rate || 0;
-    const nights = (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24);
-    if (nights <= 0) return 0;
-    let total = adultsNum * price * nights;
-    childrenAges.forEach((ageGroup) => {
-      if (ageGroup === "0-6") return;
-      if (ageGroup === "7-12") total += price * 0.5 * nights;
-      if (ageGroup === "13+") total += price * nights;
-    });
-    return total;
-  };
 
   return (
     <div className="bookroom-page">
@@ -203,7 +207,7 @@ export default function BookRoom() {
         </div>
 
         <div className="form-group">
-          <strong>Toplam Fiyat: ₺{calculateTotal()}</strong>
+          <strong>Toplam Fiyat: ₺{totalPrice}</strong>
         </div>
 
         <button type="submit" disabled={submitting}>
