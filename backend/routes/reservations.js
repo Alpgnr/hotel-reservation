@@ -4,10 +4,39 @@ const auth = require("../middleware/auth");
 
 const router = express.Router();
 
+// price calculation endpoint
+router.post("/calculate-price", auth, async (req, res) => {
+  try {
+    const { room_id, check_in, check_out, adults, children_ages } = req.body;
+
+    if (!room_id || !check_in || !check_out || !adults) {
+      return res.status(400).json({ error: "Eksik veri" });
+    }
+
+    // getting room price from database
+    const [roomRows] = await db.query("SELECT price FROM rooms WHERE id = ?", [room_id]);
+    if (roomRows.length === 0) {
+      return res.status(404).json({ error: "Oda bulunamadı" });
+    }
+
+    const roomPrice = roomRows[0].price;
+    const childrenAgesArray = children_ages || [];
+    
+    // calculating total price using utility function
+    const { calculateTotal } = require("../../utility/priceCalculation");
+    const total_price = calculateTotal(roomPrice, check_in, check_out, adults, childrenAgesArray);
+
+    res.json({ total_price });
+  } catch (error) {
+    console.error("Fiyat hesaplama hatası:", error);
+    res.status(500).json({ error: "Fiyat hesaplanamadı" });
+  }
+});
+
 // creating reservation
 router.post("/", auth, async (req, res) => {
   try {
-    const { room_id, check_in, check_out, adults, children, total_price } = req.body;
+    const { room_id, check_in, check_out, adults, children, children_ages} = req.body;
 
     // basic validation
     if (!room_id || !check_in || !check_out) {
@@ -34,7 +63,7 @@ router.post("/", auth, async (req, res) => {
     }
 
     // ensure room exists
-    const [roomRows] = await db.query("SELECT id FROM rooms WHERE id = ?", [room_id]);
+    const [roomRows] = await db.query("SELECT id, price FROM rooms WHERE id = ?", [room_id]);
     if (roomRows.length === 0) {
       return res.status(404).json({ error: "Oda bulunamadı" });
     }
@@ -53,10 +82,16 @@ router.post("/", auth, async (req, res) => {
       return res.status(409).json({ error: "Bu tarihler için oda dolu" });
     }
 
+    // getting room price from database, children ages from frontend, importing utility function to get total price
+    const roomPrice = roomRows[0].price;
+    const childrenAgesArray = children_ages || [];
+    const { calculateTotal } = require("../../utility/priceCalculation");
+    const calculated_total_price = calculateTotal(roomPrice, check_in, check_out, adults || 0, childrenAgesArray);
+
     await db.query(
       `INSERT INTO reservations (user_id, room_id, check_in, check_out, adults, children, total_price, status)
        VALUES (?, ?, ?, ?, ?, ?, ?, 'active')`,
-      [req.user.id, room_id, check_in, check_out, adults || 0, children || 0, total_price || 0]
+      [req.user.id, room_id, check_in, check_out, adults || 0, children || 0, calculated_total_price]
     );
 
     res.json({ message: "Rezervasyon oluşturuldu" });
